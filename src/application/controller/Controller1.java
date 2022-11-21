@@ -1,6 +1,7 @@
 package application.controller;
 
 import application.Client;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
@@ -23,26 +24,31 @@ public class Controller1 implements Initializable {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getClassLoader().getResource("mainUI.fxml"));
             Pane root = fxmlLoader.load();
-            Client client1 = new Client();
-            client1.start();
-            Controller controller = fxmlLoader.getController();
-            controller.setClient(client1);
 
-            client1.send("hello");
-            if (client1.receive().equals("Player1,请等待另一名玩家...")) {
-                controller.setTURN(true);
-            } else {
-                client1.send("hello");
-            }
+//            Client client1 = new Client();
+//            client1.start();
+//            Controller controller = fxmlLoader.getController();
+//            controller.setClient(client1);
+//
+//            client1.send("hello");
+//            if (client1.receive().equals("Player1,请等待另一名玩家...")) {
+//                controller.setTURN(true);
+//            } else {
+//                client1.send("hello");
+//            }
 
-//            new Thread(new Runnable() {
+//            Platform.runLater(new Runnable() {
 //                @Override
 //                public void run() {
 //                    while (true) {
-//                        client1.receive();
+//                        String receive = client1.receive();
+//                        int rx = (int)receive.charAt(0) - (int)'0';
+//                        int ry = (int)receive.charAt(2) - (int)'0';
+//                        controller.refreshBoard(rx,ry);
+//                        controller.TURN = !controller.TURN;
 //                    }
 //                }
-//            }).start();
+//            });
 
             Stage primaryStage = new Stage();
             primaryStage.setTitle("Tic Tac Toe");

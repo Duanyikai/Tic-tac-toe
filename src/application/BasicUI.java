@@ -25,6 +25,7 @@ public class BasicUI extends Application {
             primaryStage.setScene(new Scene(root));
             primaryStage.setResizable(false);
             primaryStage.show();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

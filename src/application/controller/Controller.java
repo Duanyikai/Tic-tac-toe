@@ -26,7 +26,7 @@ public class Controller implements Initializable {
     @FXML
     private Rectangle game_panel;
 
-    private boolean TURN = false;
+    public boolean TURN = false;
 
     public void setTURN(boolean TURN) {
         this.TURN = TURN;
@@ -36,36 +36,66 @@ public class Controller implements Initializable {
     private static final boolean[][] flag = new boolean[3][3];
 
     public Client client;
+    public int isNewThread = 0;
 
     int x = -1, y = -1;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        game_panel.setOnMouseClicked(event -> {
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
+        client = new Client();
+        client.start();
+
+
+        client.send("hello");
+        if (client.receive().equals("Player1,请等待另一名玩家...")) {
+            TURN=true;
+        } else {
+            client.send("hello");
+        }
+        if (isNewThread == 0) {
+            new Thread(() -> {
+                while (true){
                     String receive = client.receive();
-                    int rx = (int)receive.charAt(0) - (int)'0';
-                    int ry = (int)receive.charAt(2) - (int)'0';
-                    refreshBoard(rx,ry);
+                    if (receive.equals("你赢了！") || receive.equals("你输了...") || receive.equals("平局...")) {
+                        break;
+                    }
+                    int rx = (int) receive.charAt(0) - (int) '0';
+                    int ry = (int) receive.charAt(2) - (int) '0';
+                    refreshBoard(rx, ry);
                     TURN = !TURN;
                 }
-            });
-
+            }).start();
+            isNewThread++;
+        }
+        game_panel.setOnMouseClicked(event -> {
             x = (int) (event.getX() / BOUND);
             y = (int) (event.getY() / BOUND);
-            if (refreshBoard(x, y)) {
+            if (TURN) {
+                refreshBoard(x, y);
                 TURN = !TURN;
+                System.out.println("玩家下在了[" + x + "," + y + "]");
+                client.send(x + "," + y);
             }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            System.out.println("玩家下在了[" + x + "," + y + "]");
-            client.send(x + "," + y);
+//            System.out.println("玩家下在了[" + x + "," + y + "]");
+//            client.send(x + "," + y);
 
+//
+//            Platform.runLater(new Runnable() {
+//                @Override
+//                public void run() {
+//                    String receive = client.receive();
+//                    int rx = (int) receive.charAt(0) - (int) '0';
+//                    int ry = (int) receive.charAt(2) - (int) '0';
+//                    refreshBoard(rx, ry);
+//                    TURN = !TURN;
+//                }
+//            });
+
+//            String receive = client.receive();
+//            int rx = (int)client.getReceivedMessage().charAt(0) - (int)'0';
+//            int ry = (int)client.getReceivedMessage().charAt(2) - (int)'0';
+//            refreshBoard(rx,ry);
+//            TURN = !TURN;
 
         });
     }
@@ -90,7 +120,7 @@ public class Controller implements Initializable {
         this.y = y;
     }
 
-    private boolean refreshBoard (int x, int y) {
+    public boolean refreshBoard(int x, int y) {
         if (chessBoard[x][y] == EMPTY) {
             chessBoard[x][y] = TURN ? PLAY_1 : PLAY_2;
             drawChess();
@@ -99,7 +129,8 @@ public class Controller implements Initializable {
         return false;
     }
 
-    private void drawChess () {
+    private void drawChess() {
+
         for (int i = 0; i < chessBoard.length; i++) {
             for (int j = 0; j < chessBoard[0].length; j++) {
                 if (flag[i][j]) {
@@ -123,33 +154,38 @@ public class Controller implements Initializable {
         }
     }
 
-    private void drawCircle (int i, int j) {
-        Circle circle = new Circle();
-        base_square.getChildren().add(circle);
-        circle.setCenterX(i * BOUND + BOUND / 2.0 + OFFSET);
-        circle.setCenterY(j * BOUND + BOUND / 2.0 + OFFSET);
-        circle.setRadius(BOUND / 2.0 - OFFSET / 2.0);
-        circle.setStroke(Color.RED);
-        circle.setFill(Color.TRANSPARENT);
-        flag[i][j] = true;
+    private void drawCircle(int i, int j) {
+        Platform.runLater(()->{
+            Circle circle = new Circle();
+            base_square.getChildren().add(circle);
+            circle.setCenterX(i * BOUND + BOUND / 2.0 + OFFSET);
+            circle.setCenterY(j * BOUND + BOUND / 2.0 + OFFSET);
+            circle.setRadius(BOUND / 2.0 - OFFSET / 2.0);
+            circle.setStroke(Color.RED);
+            circle.setFill(Color.TRANSPARENT);
+            flag[i][j] = true;
+        });
+
     }
 
-    private void drawLine (int i, int j) {
-        Line line_a = new Line();
-        Line line_b = new Line();
-        base_square.getChildren().add(line_a);
-        base_square.getChildren().add(line_b);
-        line_a.setStartX(i * BOUND + OFFSET * 1.5);
-        line_a.setStartY(j * BOUND + OFFSET * 1.5);
-        line_a.setEndX((i + 1) * BOUND + OFFSET * 0.5);
-        line_a.setEndY((j + 1) * BOUND + OFFSET * 0.5);
-        line_a.setStroke(Color.BLUE);
+    private void drawLine(int i, int j) {
+        Platform.runLater(()->{
+            Line line_a = new Line();
+            Line line_b = new Line();
+            base_square.getChildren().add(line_a);
+            base_square.getChildren().add(line_b);
+            line_a.setStartX(i * BOUND + OFFSET * 1.5);
+            line_a.setStartY(j * BOUND + OFFSET * 1.5);
+            line_a.setEndX((i + 1) * BOUND + OFFSET * 0.5);
+            line_a.setEndY((j + 1) * BOUND + OFFSET * 0.5);
+            line_a.setStroke(Color.BLUE);
 
-        line_b.setStartX((i + 1) * BOUND + OFFSET * 0.5);
-        line_b.setStartY(j * BOUND + OFFSET * 1.5);
-        line_b.setEndX(i * BOUND + OFFSET * 1.5);
-        line_b.setEndY((j + 1) * BOUND + OFFSET * 0.5);
-        line_b.setStroke(Color.BLUE);
-        flag[i][j] = true;
+            line_b.setStartX((i + 1) * BOUND + OFFSET * 0.5);
+            line_b.setStartY(j * BOUND + OFFSET * 1.5);
+            line_b.setEndX(i * BOUND + OFFSET * 1.5);
+            line_b.setEndY((j + 1) * BOUND + OFFSET * 0.5);
+            line_b.setStroke(Color.BLUE);
+            flag[i][j] = true;
+        });
     }
 }

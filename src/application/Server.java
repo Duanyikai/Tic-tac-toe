@@ -70,6 +70,8 @@ public class Server {
 
         GameData gameData;
 
+        volatile boolean hasWinner = false;
+
         //构造方法
         public ClientHandler(Socket socket) {
             this.socket = socket;
@@ -121,6 +123,9 @@ public class Server {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 System.out.println("等待读取客户端：" + socket.getLocalAddress().toString().substring(1) + ":" + socket.getPort() + " 的消息");
                 while (receivedMessage == null) {
+                    if (hasWinner) {
+                        break;
+                    }
                     String clientInfo = bufferedReader.readLine();
                     if (clientInfo != null) {
                         if (!clientInfo.equals("hello")) {
@@ -144,6 +149,8 @@ public class Server {
             } catch (SocketException e) {
                 // 强制关闭连接后的处理
                 System.out.println(socket.getLocalAddress().toString().substring(1) + ":" + socket.getPort() + "断开连接");
+                setSendMessage("另一位玩家退出");
+                send();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -170,8 +177,13 @@ public class Server {
                 System.out.println(sendMessage);
                 sendMessage = null;
 
+            } catch (SocketException e) {
+                // 强制关闭连接后的处理
+                System.out.println(socket.getLocalAddress().toString().substring(1) + ":" + socket.getPort() + "断开连接");
+                setSendMessage("另一位玩家退出");
+                send();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
 

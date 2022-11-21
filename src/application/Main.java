@@ -19,12 +19,6 @@ public class Main extends Application {
             fxmlLoader.setLocation(getClass().getClassLoader().getResource("mainUI.fxml"));
             Pane root = fxmlLoader.load();
 
-            Client client1 = new Client();
-            client1.start();
-            Controller controller = fxmlLoader.getController();
-            controller.setClient(client1);
-
-
             primaryStage.setTitle("Tic Tac Toe");
             primaryStage.setScene(new Scene(root));
             primaryStage.setResizable(false);

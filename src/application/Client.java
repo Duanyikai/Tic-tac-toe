@@ -6,12 +6,16 @@ import java.net.SocketException;
 
 public class Client {
 
-    String receivedMessage = null;
+    volatile String receivedMessage = null;
 
     Socket socket = null;
 
     public void setReceivedMessage(String receivedMessage) {
         this.receivedMessage = receivedMessage;
+    }
+
+    public String getReceivedMessage() {
+        return receivedMessage;
     }
 
     public void send(String sendMessage) {
@@ -24,7 +28,7 @@ public class Client {
             // 退出
             System.exit(0);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
@@ -65,11 +69,15 @@ public class Client {
         try {
             socket = new Socket("localhost", 5000);
             System.out.println("已连接至服务器");
-//            send("hello");
-//            receive();
-//            while (true) {
-//
-//            }
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    while (true) {
+//                        receive();
+//                    }
+//                }
+//            }).start();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
