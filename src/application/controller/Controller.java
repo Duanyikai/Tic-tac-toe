@@ -1,5 +1,7 @@
 package application.controller;
 
+import application.Client;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.Pane;
@@ -24,20 +26,68 @@ public class Controller implements Initializable {
     @FXML
     private Rectangle game_panel;
 
-    private static boolean TURN = false;
+    private boolean TURN = false;
+
+    public void setTURN(boolean TURN) {
+        this.TURN = TURN;
+    }
 
     private static final int[][] chessBoard = new int[3][3];
     private static final boolean[][] flag = new boolean[3][3];
 
+    public Client client;
+
+    int x = -1, y = -1;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         game_panel.setOnMouseClicked(event -> {
-            int x = (int) (event.getX() / BOUND);
-            int y = (int) (event.getY() / BOUND);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    String receive = client.receive();
+                    int rx = (int)receive.charAt(0) - (int)'0';
+                    int ry = (int)receive.charAt(2) - (int)'0';
+                    refreshBoard(rx,ry);
+                    TURN = !TURN;
+                }
+            });
+
+            x = (int) (event.getX() / BOUND);
+            y = (int) (event.getY() / BOUND);
             if (refreshBoard(x, y)) {
                 TURN = !TURN;
             }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("玩家下在了[" + x + "," + y + "]");
+            client.send(x + "," + y);
+
+
         });
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 
     private boolean refreshBoard (int x, int y) {
