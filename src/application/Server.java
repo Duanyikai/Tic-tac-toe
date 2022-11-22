@@ -149,8 +149,18 @@ public class Server {
             } catch (SocketException e) {
                 // 强制关闭连接后的处理
                 System.out.println(socket.getLocalAddress().toString().substring(1) + ":" + socket.getPort() + "断开连接");
-                setSendMessage("另一位玩家退出");
-                send();
+                GameList.get(gameID).setMessage("另一个玩家退出");
+                if (turn == 0) {
+                    System.out.println(0);
+                    gameData.oneToTwo();
+                    turn = 1;
+                    send();
+                } else {
+                    System.out.println(1);
+                    gameData.twoToOne();
+                    turn = 0;
+                    send();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -180,8 +190,21 @@ public class Server {
             } catch (SocketException e) {
                 // 强制关闭连接后的处理
                 System.out.println(socket.getLocalAddress().toString().substring(1) + ":" + socket.getPort() + "断开连接");
-                setSendMessage("另一位玩家退出");
-                send();
+                GameList.get(gameID).setMessage("另一个玩家退出");
+                if (turn == 0) {
+                    System.out.println(0);
+                    gameData.oneToTwo();
+                    turn = 1;
+                    send();
+                } else {
+                    System.out.println(1);
+                    gameData.twoToOne();
+                    turn = 0;
+                    send();
+                }
+
+//                setSendMessage("另一位玩家退出");
+//                send();
             } catch (IOException e) {
                 e.printStackTrace();
             }

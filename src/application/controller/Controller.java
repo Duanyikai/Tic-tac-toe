@@ -56,7 +56,7 @@ public class Controller implements Initializable {
             new Thread(() -> {
                 while (true){
                     String receive = client.receive();
-                    if (receive.equals("你赢了！") || receive.equals("你输了...") || receive.equals("平局...")) {
+                    if (receive.equals("你赢了！") || receive.equals("你输了...") || receive.equals("平局...") || receive.equals("另一个玩家退出")) {
                         break;
                     }
                     int rx = (int) receive.charAt(0) - (int) '0';
@@ -76,28 +76,10 @@ public class Controller implements Initializable {
                 System.out.println("玩家下在了[" + x + "," + y + "]");
                 client.send(x + "," + y);
             }
-//            System.out.println("玩家下在了[" + x + "," + y + "]");
-//            client.send(x + "," + y);
-
-//
-//            Platform.runLater(new Runnable() {
-//                @Override
-//                public void run() {
-//                    String receive = client.receive();
-//                    int rx = (int) receive.charAt(0) - (int) '0';
-//                    int ry = (int) receive.charAt(2) - (int) '0';
-//                    refreshBoard(rx, ry);
-//                    TURN = !TURN;
-//                }
-//            });
-
-//            String receive = client.receive();
-//            int rx = (int)client.getReceivedMessage().charAt(0) - (int)'0';
-//            int ry = (int)client.getReceivedMessage().charAt(2) - (int)'0';
-//            refreshBoard(rx,ry);
-//            TURN = !TURN;
 
         });
+
+
     }
 
     public void setClient(Client client) {

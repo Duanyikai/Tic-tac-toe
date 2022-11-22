@@ -32,44 +32,77 @@ public class GameData {
 
     public void oneToTwo() {
         clientHandler2.setSendMessage(message);
-        String[] s = message.split(",");
-        Board[Integer.parseInt(s[0])][Integer.parseInt(s[1])] = 1;
+        if (!message.equals("另一个玩家退出")) {
+            String[] s = message.split(",");
+            Board[Integer.parseInt(s[0])][Integer.parseInt(s[1])] = 1;
 
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            String state = checkState();
+            if (state.equals("1")) {
+                clientHandler1.hasWinner = true;
+                clientHandler2.hasWinner = true;
+                clientHandler1.sendMessage = "你赢了！";
+                clientHandler2.sendMessage = "你输了...";
+                clientHandler2.send();
+
+            } else if (state.equals("2")) {
+                clientHandler1.hasWinner = true;
+                clientHandler2.hasWinner = true;
+                clientHandler1.sendMessage = "你输了...";
+                clientHandler2.sendMessage = "你赢了！";
+                clientHandler2.send();
+
+            } else if (state.equals("平局")) {
+                clientHandler1.hasWinner = true;
+                clientHandler2.hasWinner = true;
+                clientHandler1.sendMessage = "平局...";
+                clientHandler2.sendMessage = "平局...";
+                clientHandler2.send();
+
+            }
         }
-        String state = checkState();
-        if (state.equals("1")) {
-            clientHandler1.hasWinner = true;
-            clientHandler2.hasWinner = true;
-            clientHandler1.sendMessage = "你赢了！";
-            clientHandler2.sendMessage = "你输了...";
-            clientHandler2.send();
 
-        } else if (state.equals("2")) {
-            clientHandler1.hasWinner = true;
-            clientHandler2.hasWinner = true;
-            clientHandler1.sendMessage = "你输了...";
-            clientHandler2.sendMessage = "你赢了！";
-            clientHandler2.send();
-
-        } else if (state.equals("平局")) {
-            clientHandler1.hasWinner = true;
-            clientHandler2.hasWinner = true;
-            clientHandler1.sendMessage = "平局...";
-            clientHandler2.sendMessage = "平局...";
-            clientHandler2.send();
-
-        }
     }
 
     public void twoToOne() {
         clientHandler1.setSendMessage(message);
-        String[] s = message.split(",");
-        Board[Integer.parseInt(s[0])][Integer.parseInt(s[1])] = 2;
-        String state = checkState();
+        if(!message.equals("另一个玩家退出")) {
+            String[] s = message.split(",");
+            Board[Integer.parseInt(s[0])][Integer.parseInt(s[1])] = 2;
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            String state = checkState();
+            if (state.equals("1")) {
+                clientHandler1.hasWinner = true;
+                clientHandler2.hasWinner = true;
+                clientHandler1.sendMessage = "你赢了！";
+                clientHandler2.sendMessage = "你输了...";
+                clientHandler1.send();
+
+            } else if (state.equals("2")) {
+                clientHandler1.hasWinner = true;
+                clientHandler2.hasWinner = true;
+                clientHandler1.sendMessage = "你输了...";
+                clientHandler2.sendMessage = "你赢了！";
+                clientHandler1.send();
+
+            } else if (state.equals("平局")) {
+                clientHandler1.hasWinner = true;
+                clientHandler2.hasWinner = true;
+                clientHandler1.sendMessage = "平局...";
+                clientHandler2.sendMessage = "平局...";
+                clientHandler1.send();
+
+            }
+        }
+
     }
 
     public String checkState() {
