@@ -25,7 +25,6 @@ public class Client {
             printWriter.println(sendMessage);
         } catch (SocketException e) {
             System.out.println("服务器异常关闭");
-            // 退出
             System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
@@ -35,17 +34,12 @@ public class Client {
     public String receive() {
         System.out.println("切换至监听状态");
         receivedMessage = null;
-        //监听部分
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             while (receivedMessage == null) {
                 String serverInfo = bufferedReader.readLine();
                 if (serverInfo != null) {
                     receivedMessage = serverInfo;
-//                    if (!serverInfo.equals("Player1,请等待另一名玩家...")) {
-//                        System.out.println("服务器的消息为：" + receivedMessage);
-//                        return receivedMessage;
-//                    }
                     System.out.println("服务器的消息为：" + receivedMessage);
                     return receivedMessage;
                 }
@@ -53,7 +47,6 @@ public class Client {
 
         } catch (SocketException e) {
             System.out.println("服务器异常关闭");
-            // 退出
             System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
@@ -69,29 +62,9 @@ public class Client {
         try {
             socket = new Socket("localhost", 5000);
             System.out.println("已连接至服务器");
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    while (true) {
-//                        receive();
-//                    }
-//                }
-//            }).start();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        finally {
-//            // 关闭连接
-//            try {
-//                if (null != socket) {
-//                    socket.close();
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//        }
     }
 
 }

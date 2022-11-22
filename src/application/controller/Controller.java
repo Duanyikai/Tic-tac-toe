@@ -9,7 +9,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -137,7 +136,7 @@ public class Controller implements Initializable {
     }
 
     private void drawCircle(int i, int j) {
-        Platform.runLater(()->{
+        Platform.runLater(() -> {
             Circle circle = new Circle();
             base_square.getChildren().add(circle);
             circle.setCenterX(i * BOUND + BOUND / 2.0 + OFFSET);

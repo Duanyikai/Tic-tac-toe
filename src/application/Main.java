@@ -1,7 +1,6 @@
 package application;
 
 
-import application.controller.Controller;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;

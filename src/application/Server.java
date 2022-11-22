@@ -33,7 +33,8 @@ public class Server {
                     clientHandler.setSendMessage("Player1,请等待另一名玩家...");
                 } else {
                     clientHandler.setSendMessage("Player2,已连接。请等待对方落子...");
-                    GameData gd = new GameData(a, clientHandlerList.get(0), clientHandlerList.get(1));
+                    GameData gd = new GameData(a, clientHandlerList.get(0),
+                            clientHandlerList.get(1));
                     GameList.add(gd);
                     clientHandlerList.get(0).setGameData(gd);
                     clientHandlerList.get(1).setGameData(gd);
@@ -117,9 +118,7 @@ public class Server {
 
         public String receive() {
             System.out.println("切换至监听状态");
-            //监听部分
             try {
-                // 读取客户端发来的数据
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 System.out.println("等待读取客户端：" + socket.getLocalAddress().toString().substring(1) + ":" + socket.getPort() + " 的消息");
                 while (receivedMessage == null) {
@@ -170,8 +169,8 @@ public class Server {
         public void send() {
             try {
                 System.out.println("切换至发送状态");
-                PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()),true);
-                while(true) {
+                PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
+                while (true) {
                     if (sendMessage != null){
                         printWriter.println(sendMessage);
                         break;
@@ -188,7 +187,6 @@ public class Server {
                 sendMessage = null;
 
             } catch (SocketException e) {
-                // 强制关闭连接后的处理
                 System.out.println(socket.getLocalAddress().toString().substring(1) + ":" + socket.getPort() + "断开连接");
                 GameList.get(gameID).setMessage("另一个玩家退出");
                 if (turn == 0) {
@@ -202,9 +200,6 @@ public class Server {
                     turn = 0;
                     send();
                 }
-
-//                setSendMessage("另一位玩家退出");
-//                send();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -213,7 +208,7 @@ public class Server {
         @Override
         public void run() {
             int state = 0;
-            while(true) {
+            while (true) {
                 if (state == 0) {
                     receive();
                     state = 1;
